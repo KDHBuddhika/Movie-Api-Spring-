@@ -1,6 +1,7 @@
 package com.movieflix.MovieApi.service.IMPL;
 
 import com.movieflix.MovieApi.service.FileService;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -8,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+
+@Service
 public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(String path, MultipartFile file) throws IOException {
