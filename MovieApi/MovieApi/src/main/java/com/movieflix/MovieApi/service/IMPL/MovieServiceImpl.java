@@ -155,7 +155,7 @@ public class MovieServiceImpl implements MovieService {
         
         //4. map it to movie to movie object
         Movie movie1 = new Movie(
-                movieId,
+                movie.getMovieId(),
                 movieDto.getTitle(),
                 movieDto.getDirector(),
                 movieDto.getStudio(),
@@ -188,7 +188,16 @@ public class MovieServiceImpl implements MovieService {
     
     //delete movie
     @Override
-    public String deleteMovie(Integer movieId) {
-        return null;
+    public String deleteMovie(Integer movieId) throws IOException {
+        
+        //1. check iif movie object exist in DB
+        Movie movie = movieRepo.findById(movieId).orElseThrow(() -> new RuntimeException("Movie Not Found"));
+        
+        //2.delete the file associated with this object
+        Files.deleteIfExists(Paths.get(path + File.separator + movie.getMovieId()));
+        
+        //3. delete movie object
+        movieRepo.delete(movie);
+        return "Movie is deleted with ID="+movie.getMovieId();
     }
 }
