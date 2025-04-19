@@ -103,7 +103,29 @@ public class MovieServiceImpl implements MovieService {
     
     @Override
     public List<MovieDto> getAllMovies() {
-   
-return  null;
+    
+        //1.fetch all movies
+        List<Movie> movies = movieRepo.findAll();
+    
+        List<MovieDto> movieDtos = new ArrayList<>();
+        //2.iterate through the list , generate posterUrl for each movie obj
+        for (Movie movie : movies){
+            String posterUrl =baseUrl + "/file/" +movie.getPoster();
+            MovieDto response = new MovieDto(
+                    movie.getMovieId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getStudio(),
+                    movie.getMovieCast(),
+                    movie.getReleaseYear(),
+                    movie.getPoster(),
+                    posterUrl
+            );
+            movieDtos.add(response);
+        }
+         
+        
+       
+         return  movieDtos;
     }
 }
