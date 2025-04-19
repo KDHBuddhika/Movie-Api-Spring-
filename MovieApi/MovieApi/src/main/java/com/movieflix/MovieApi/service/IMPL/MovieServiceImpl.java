@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public MovieDto addMovie(MovieDto movieDto, MultipartFile file) throws IOException {
         //1. upload file
+        if( Files.exists(Paths.get(path + File.separator + file.getOriginalFilename()))){
+            throw  new RuntimeException("File Already exist. please enter another file name ");
+        }
         String uploadedFileName = fileService.uploadFile(path,file);
     
         System.out.println(uploadedFileName);
@@ -45,7 +51,7 @@ public class MovieServiceImpl implements MovieService {
         
         //3.map dto to Movie object
         Movie movie = new Movie(
-                movieDto.getMovieId(),
+               null,
                 movieDto.getTitle(),
                 movieDto.getDirector(),
                 movieDto.getStudio(),
@@ -55,7 +61,7 @@ public class MovieServiceImpl implements MovieService {
         );
         System.out.println("1");
         //4.save the movie object
-        movieRepo.save(movie);
+       Movie savedMovie = movieRepo.save(movie);
         System.out.println("2");
         
         //5. generate the posterUrl
@@ -63,13 +69,13 @@ public class MovieServiceImpl implements MovieService {
         
         //6.map movie object to dto and return it
         MovieDto response = new MovieDto(
-                movie.getMovieId(),
-                movie.getTitle(),
-                movie.getDirector(),
-                movie.getStudio(),
-                movie.getMovieCast(),
-                movie.getReleaseYear(),
-                movie.getPoster(),
+                savedMovie.getMovieId(),
+                savedMovie.getTitle(),
+                savedMovie.getDirector(),
+                savedMovie.getStudio(),
+                savedMovie.getMovieCast(),
+                savedMovie.getReleaseYear(),
+                savedMovie.getPoster(),
                 posterUrl
         );
         return response;
@@ -127,5 +133,62 @@ public class MovieServiceImpl implements MovieService {
         
        
          return  movieDtos;
+    }
+    
+    //update movie
+    @Override
+    public MovieDto updateMovie(Integer movieId, MovieDto movieDto, MultipartFile file) throws IOException {
+        // 1. cheack if movie object exist with given movieid
+        Movie movie = movieRepo.findById(movieId).orElseThrow(() -> new RuntimeException("Movie Not Found"));
+        
+        //2.if file is null , do nothing
+        //if file is not null , them delete existing file and upload now file
+        String fileName = movie.getPoster();
+        if(file != null){
+            Files.deleteIfExists(Paths.get(path + File.separator + fileName));
+            fileName = fileService.uploadFile(path,file);
+        }
+        
+        
+        //3.set movie dto's poster value , according to step2
+        movieDto.setPoster(fileName);
+        
+        //4. map it to movie to movie object
+        Movie movie1 = new Movie(
+                movieId,
+                movieDto.getTitle(),
+                movieDto.getDirector(),
+                movieDto.getStudio(),
+                movieDto.getMovieCast(),
+                movieDto.getReleaseYear(),
+                movieDto.getPoster()
+        );
+        
+        //5.save the movie object -> return saved movie object
+        Movie updatedMovie = movieRepo.save(movie1);
+        
+        //6.generate poster url for it
+        String posterUrl =baseUrl + "/file/" + fileName;
+        
+        //7. map to movie dto and return it
+        MovieDto response = new MovieDto(
+                updatedMovie.getMovieId(),
+                updatedMovie.getTitle(),
+                updatedMovie.getDirector(),
+                updatedMovie.getStudio(),
+                updatedMovie.getMovieCast(),
+                updatedMovie.getReleaseYear(),
+                updatedMovie.getPoster(),
+                posterUrl
+        );
+        
+        return response;
+    }
+    
+    
+    //delete movie
+    @Override
+    public String deleteMovie(Integer movieId) {
+        return null;
     }
 }
