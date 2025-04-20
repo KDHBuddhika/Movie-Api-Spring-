@@ -219,8 +219,7 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> movies = moviePage.getContent();
         
         List<MovieDto> movieDtos = new ArrayList<>();
-    
-        //2.iterate through the list , generate posterUrl for each movie obj
+        
         for (Movie movie : movies){
             String posterUrl =baseUrl + "/file/" +movie.getPoster();
             MovieDto response = new MovieDto(
@@ -247,8 +246,8 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir) {
     
-        Sort sort = sortBy.equalsIgnoreCase("asc") ? Sort.by(dir).ascending() :
-                                                                Sort.by(dir).descending();
+        Sort sort = dir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() :
+                                                                Sort.by(sortBy).descending();
     
         Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
         Page<Movie> moviePages = movieRepo.findAll(pageable);
