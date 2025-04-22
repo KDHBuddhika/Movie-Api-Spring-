@@ -50,13 +50,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
     
-    private boolean isEnabled = true;
-    
-    private boolean isAccountNonExpired =true;
-    
-    private boolean isAccountNonLocked = true;
-    
-    private boolean isCredentialsNonExpired =true;
+
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,22 +60,22 @@ public class User implements UserDetails {
     
     @Override
     public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+        return true;
     }
     
     @Override
     public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
+        return true;
     }
     
     @Override
     public boolean isCredentialsNonExpired() {
-        return isCredentialsNonExpired;
+        return true;
     }
     
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return true;
     }
     
     @Override
