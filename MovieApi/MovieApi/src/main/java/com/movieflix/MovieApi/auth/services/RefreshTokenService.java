@@ -22,11 +22,12 @@ public class RefreshTokenService {
     private RefreshTokenRepo refreshTokenRepo;
     
     public RefreshToken createRefreshToken(String username){
-        User user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with name :"+username));
+        User user = userRepo.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with name :"+username));
         
         RefreshToken refreshToken = user.getRefreshToken();
         if(refreshToken == null){
-            long refreshTokenValidity = 5*60*60*10000;
+//            long refreshTokenValidity = 5*60*60*10000;
+            long refreshTokenValidity = 30 * 1000;
             refreshToken = RefreshToken.builder()
                     .refreshToken(UUID.randomUUID().toString())
                     .expirationTime(Instant.now().plusMillis(refreshTokenValidity))
