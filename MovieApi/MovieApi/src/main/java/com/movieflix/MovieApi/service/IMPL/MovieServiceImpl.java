@@ -40,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
     @Value("${base.url}")
     private String baseUrl;
     
-    
+   //------------------------------------ add movie ---------------------------------------------
     @Override
     public MovieDto addMovie(MovieDto movieDto, MultipartFile file) throws IOException {
         //1. upload file
@@ -89,7 +89,7 @@ public class MovieServiceImpl implements MovieService {
     }
     
     
-    
+    // -----------------------------------------get movie by id-----------------------------------------
     @Override
     public MovieDto getMovie(Integer movieId) {
         //1 .cheack the data in db and if exist fetch the data of give id
@@ -113,7 +113,7 @@ public class MovieServiceImpl implements MovieService {
     }
     
     
-    
+    //---------------------------------- get all movies ------------------------------------------------------
     @Override
     public List<MovieDto> getAllMovies() {
     
@@ -142,7 +142,7 @@ public class MovieServiceImpl implements MovieService {
          return  movieDtos;
     }
     
-    //update movie
+    //------------------------------------------update movie----------------------------------------------
     @Override
     public MovieDto updateMovie(Integer movieId, MovieDto movieDto, MultipartFile file) throws IOException {
         // 1. cheack if movie object exist with given movieid
@@ -193,7 +193,7 @@ public class MovieServiceImpl implements MovieService {
     }
     
     
-    //delete movie
+    //---------------------------------------------delete movie-------------------------------------------
     @Override
     public String deleteMovie(Integer movieId) throws IOException {
         
@@ -210,14 +210,16 @@ public class MovieServiceImpl implements MovieService {
     
     
     
-    
+    //-------------------------------- get All Movies With Pagination -------------------------------------
     @Override
     public MoviePageResponse getAllMoviesWithPagination(Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber,pageSize);
+       
         
         Page<Movie> moviePage = movieRepo.findAll(pageable);
+//      System.out.println(moviePage);
         List<Movie> movies = moviePage.getContent();
-        
+//      System.out.println(movies);
         List<MovieDto> movieDtos = new ArrayList<>();
         
         for (Movie movie : movies){
@@ -243,6 +245,10 @@ public class MovieServiceImpl implements MovieService {
                                      moviePage.isLast());
     }
     
+    
+    
+    
+    //------------------------------get All Movies With Pagination And Sorting ------------------------------
     @Override
     public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir) {
     
@@ -278,4 +284,9 @@ public class MovieServiceImpl implements MovieService {
                 moviePages.isLast());
     
     }
+    
+    
+    
+    
+    
 }
