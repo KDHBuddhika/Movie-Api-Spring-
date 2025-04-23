@@ -1,4 +1,14 @@
 package com.movieflix.MovieApi.dto;
 
-public record MailBody(String to , String subject , String text) {
+
+import lombok.Builder;
+import lombok.Data;
+
+@Builder
+@Data
+public class MailBody{
+    
+    private String to;
+    private String subject ;
+    private String text;
 }
