@@ -9,6 +9,7 @@ import com.movieflix.MovieApi.dto.MailBody;
 import com.movieflix.MovieApi.service.EmailService;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
 
@@ -57,6 +59,20 @@ public class ForgotPasswordController {
                 
     }
     
+    
+    
+    @PostMapping("/verifyOtp/{otp}/email")
+    public ResponseEntity<String> verifyOtp(@PathVariable Integer otp  , @PathVariable String email){
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Please enter valied email "));
+        ForgotPassword fp= forgotPasswordRepo.findByOtpAndUser(otp,user).orElseThrow(() -> new RuntimeException("Invalid OTP for email "+email));
+        
+        if(fp.getExpirationDate().before(Date.from(Instant.now()))){
+            forgotPasswordRepo.deleteById(fp.getId());
+            return  new ResponseEntity<>("OTP has Expired" , HttpStatus.EXPECTATION_FAILED);
+        }
+        
+        return ResponseEntity.ok("OTP verified");
+    }
     
     private Integer otpGenerator(){
         Random random = new Random();
