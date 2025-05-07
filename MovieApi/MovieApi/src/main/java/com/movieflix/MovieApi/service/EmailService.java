@@ -20,7 +20,7 @@ public class EmailService {
     public void sendSimpleMessage(MailBody mailBody){
         SimpleMailMessage message =new SimpleMailMessage();
         message.setTo(mailBody.getTo());
-        message.setFrom("");
+        message.setFrom("dineshhashan119@gmail.com");
         message.setSubject(mailBody.getSubject());
         message.setText(mailBody.getText());
         
